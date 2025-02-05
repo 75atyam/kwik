@@ -11,14 +11,28 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from excel_details import iterate_excel_rows
 
+from datetime import datetime
 
-# Initialize the logger
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-logger = logging.getLogger()
+def setup_logger():
+    log_filename = f"C:\\Users\\satya\\OneDrive\\Desktop\\govreg\\log\\app__{datetime.now().strftime('%Y-%m-%d____%H-%M-%S')}.log"
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        handlers=[
+            logging.FileHandler(log_filename),
+            logging.StreamHandler()
+        ]
+    )
+    return logging.getLogger()
 
 def startup():
     phone_list_Found=False
+    # Initialize the logger
     
+    logger = setup_logger()
+    logger.info("Logger is set up and ready to use.")
+    
+
     # Log the start of the automation process
     logger.info("Starting the automation process...")
 
@@ -141,21 +155,17 @@ def startup():
 
         # Check if the specific element text exists in the page source
         if 'Make a call' in page_source and phone_list_Found:
-            
-            
+             
             field = driver.find_element(By.ID, "keypad-input-phone-number")
             field.clear()
             for phone_lists in phone_list:
-                
                 field.clear()
                 field.send_keys(phone_lists) 
                 print("Element found: Make a call")
-            
-        else:
-            print("Element not found")  
-            
-            
-            
+
+
+
+
         # Wait for the post-login page to load
         logger.info("Successfully logged in and the post-login page has loaded.")
 
@@ -165,8 +175,8 @@ def startup():
 
     finally:
         # Clean up and close the browser
-        if 'driver' in locals():
-            driver.quit()
+        # if 'driver' in locals():
+        #     driver.quit()
         logger.info("Browser closed and resources cleaned up.")
 
 # Call the startup function
